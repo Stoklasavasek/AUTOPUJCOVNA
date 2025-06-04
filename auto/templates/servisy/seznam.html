@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Seznam servisních záznamů | Autopůjčovna{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>Seznam servisních záznamů</h2>
+        </div>
+        <div class="col-md-4 text-right">
+            <a href="{% url 'pridat_servis' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nový servis
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtry -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row">
+                <div class="col-md-3 mb-2">
+                    <input type="date" name="datum_od" class="form-control" placeholder="Datum od" value="{{ request.GET.datum_od }}">
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="date" name="datum_do" class="form-control" placeholder="Datum do" value="{{ request.GET.datum_do }}">
+                </div>
+                <div class="col-md-3 mb-2">
+                    <select name="auto" class="form-control">
+                        <option value="">Všechna auta</option>
+                        {% for auto in auta %}
+                        <option value="{{ auto.id }}" {% if request.GET.auto == auto.id|stringformat:"s" %}selected{% endif %}>
+                            {{ auto.znacka }} {{ auto.model }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <button type="submit" class="btn btn-secondary btn-block">Filtrovat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Seznam servisů -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Auto</th>
+                            <th>Datum</th>
+                            <th>Cena</th>
+                            <th>Popis servisu</th>
+                            <th>Stav</th>
+                            <th>Akce</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for servis in servisy %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'detail_auta' servis.auto.pk %}">
+                                    {{ servis.auto.znacka }} {{ servis.auto.model }}
+                                </a>
+                            </td>
+                            <td>{{ servis.datum }}</td>
+                            <td>{{ servis.cena }} Kč</td>
+                            <td>{{ servis.popis_servisu }}</td>
+                            <td>
+                                {% if servis.stav == 'probiha' %}
+                                    <span class="badge badge-warning">Probíhá</span>
+                                    <form method="post" action="{% url 'oznacit_servis_jako_opraveny' servis.pk %}" class="d-inline ml-2">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="fas fa-check"></i> Označit jako opraveno
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="badge badge-success">Opraveno</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'detail_servisu' servis.pk %}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#smazatServis{{ servis.pk }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Modal pro smazání -->
+                                <div class="modal fade" id="smazatServis{{ servis.pk }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Smazat servisní záznam</h5>
+                                                <button type="button" class="close" data-dismiss="modal">
+                                                    <span>&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Opravdu chcete smazat tento servisní záznam?</p>
+                                                <p><strong>Auto:</strong> {{ servis.auto.znacka }} {{ servis.auto.model }}</p>
+                                                <p><strong>Datum:</strong> {{ servis.datum }}</p>
+                                                <p><strong>Cena:</strong> {{ servis.cena }} Kč</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form action="{% url 'smazat_servis' servis.pk %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušit</button>
+                                                    <button type="submit" class="btn btn-danger">Smazat</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">Žádné servisní záznamy k zobrazení</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

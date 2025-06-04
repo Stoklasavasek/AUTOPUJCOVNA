@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Detail servisu | Autopůjčovna{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Detail servisu</h1>
+                <div>
+                    <a href="{% url 'upravit_servis' servis.pk %}" class="btn btn-primary mr-2">
+                        <i class="fas fa-edit"></i> Upravit
+                    </a>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#smazatServis">
+                        <i class="fas fa-trash"></i> Smazat
+                    </button>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Informace o servisu</h5>
+                    <dl class="row">
+                        <dt class="col-sm-3">Auto:</dt>
+                        <dd class="col-sm-9">
+                            <a href="{% url 'detail_auta' servis.auto.pk %}">
+                                {{ servis.auto.znacka }} {{ servis.auto.model }}
+                            </a>
+                        </dd>
+
+                        <dt class="col-sm-3">Datum:</dt>
+                        <dd class="col-sm-9">{{ servis.datum }}</dd>
+
+                        <dt class="col-sm-3">Cena:</dt>
+                        <dd class="col-sm-9">{{ servis.cena }} Kč</dd>
+
+                        <dt class="col-sm-3">Popis servisu:</dt>
+                        <dd class="col-sm-9">{{ servis.popis_servisu }}</dd>
+
+                        <dt class="col-sm-3">Stav:</dt>
+                        <dd class="col-sm-9">
+                            {% if servis.stav == 'probiha' %}
+                                <span class="badge badge-warning">Probíhá</span>
+                            {% else %}
+                                <span class="badge badge-success">Opraveno</span>
+                            {% endif %}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pro smazání -->
+<div class="modal fade" id="smazatServis" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Smazat servis</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Opravdu chcete smazat tento servisní záznam?</p>
+                <p><strong>Auto:</strong> {{ servis.auto.znacka }} {{ servis.auto.model }}</p>
+                <p><strong>Datum:</strong> {{ servis.datum }}</p>
+                <p><strong>Cena:</strong> {{ servis.cena }} Kč</p>
+            </div>
+            <div class="modal-footer">
+                <form action="{% url 'smazat_servis' servis.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušit</button>
+                    <button type="submit" class="btn btn-danger">Smazat</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

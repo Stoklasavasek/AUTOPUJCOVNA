@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Upravit auto {{ auto.znacka }} {{ auto.model }} | Autopůjčovna{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>Upravit auto: {{ auto.znacka }} {{ auto.model }}</h2>
+        </div>
+        <div class="col-md-4 text-right">
+            <a href="{% url 'auto:detail_auta' auto.pk %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Zpět na detail
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class="form-group">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% if field.errors %}
+                            <div class="alert alert-danger">
+                                {{ field.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Uložit změny
+                            </button>
+                            <a href="{% url 'auto:detail_auta' auto.pk %}" class="btn btn-secondary">Zrušit</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <!-- Aktuální stav -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Aktuální stav</h5>
+                </div>
+                <div class="card-body">
+                    <dl>
+                        <dt>Počet aktivních půjček:</dt>
+                        <dd>{{ auto.pujcka_set.count }}</dd>
+                        
+                        <dt>Poslední servis:</dt>
+                        <dd>
+                            {% with posledni_servis=auto.servis_set.last %}
+                            {% if posledni_servis %}
+                                {{ posledni_servis.datum }}
+                            {% else %}
+                                Žádný servis
+                            {% endif %}
+                            {% endwith %}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Nebezpečná zóna -->
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Nebezpečná zóna</h5>
+                </div>
+                <div class="card-body">
+                    <p>Smazání auta je nevratná operace. Auto lze smazat pouze pokud nemá žádné aktivní půjčky.</p>
+                    <form method="post" action="{% url 'auto:smazat_auto' auto.pk %}" onsubmit="return confirm('Opravdu chcete smazat toto auto?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-block" {% if auto.pujcka_set.exists %}disabled{% endif %}>
+                            <i class="fas fa-trash"></i> Smazat auto
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

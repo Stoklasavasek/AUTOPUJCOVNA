@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Hlavní stránka | Autopůjčovna{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">{{ nadpis }}</h1>
+
+    <!-- Statistiky -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Počet aut</h5>
+                    <p class="card-text display-4">{{ pocet_aut }}</p>
+                    <a href="{% url 'seznam_aut' %}" class="btn btn-light">Zobrazit auta</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Počet zákazníků</h5>
+                    <p class="card-text display-4">{{ pocet_zakazniku }}</p>
+                    <a href="{% url 'seznam_zakazniku' %}" class="btn btn-light">Zobrazit zákazníky</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Aktivní půjčky</h5>
+                    <p class="card-text display-4">{{ pocet_pujcek }}</p>
+                    <a href="{% url 'seznam_pujcek' %}" class="btn btn-light">Zobrazit půjčky</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rychlé akce -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Rychlé akce</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a href="{% url 'pridat_auto' %}" class="btn btn-primary btn-block mb-2">
+                                <i class="fas fa-plus-circle"></i> Přidat auto
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'pridat_zakaznika' %}" class="btn btn-success btn-block mb-2">
+                                <i class="fas fa-user-plus"></i> Nový zákazník
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'pridat_pujcku' %}" class="btn btn-info btn-block mb-2">
+                                <i class="fas fa-key"></i> Nová půjčka
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'pridat_platbu' %}" class="btn btn-warning btn-block mb-2">
+                                <i class="fas fa-money-bill-wave"></i> Nová platba
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a href="{% url 'pridat_servis' %}" class="btn btn-secondary btn-block mb-2">
+                                <i class="fas fa-tools"></i> Nový servis
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aktivní půjčky -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Aktivní půjčky</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Auto</th>
+                                    <th>Zákazník</th>
+                                    <th>Od</th>
+                                    <th>Do</th>
+                                    <th>Stav</th>
+                                    <th>Akce</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pujcka in aktivni_pujcky %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'detail_auta' pujcka.auto.pk %}">
+                                            {{ pujcka.auto.znacka }} {{ pujcka.auto.model }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'detail_zakaznika' pujcka.zakaznik.pk %}">
+                                            {{ pujcka.zakaznik.jmeno }} {{ pujcka.zakaznik.prijmeni }}
+                                        </a>
+                                    </td>
+                                    <td>{{ pujcka.datum_pujceni }}</td>
+                                    <td>{{ pujcka.datum_vraceni|default:"Probíhá" }}</td>
+                                    <td>
+                                        {% if pujcka.datum_vraceni %}
+                                        <span class="badge badge-warning">Rezervováno</span>
+                                        {% else %}
+                                        <span class="badge badge-success">Aktivní</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'upravit_pujcku' pujcka.pk %}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">Žádné aktivní půjčky</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

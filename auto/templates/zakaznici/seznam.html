@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Seznam zákazníků | Autopůjčovna{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>{{ nadpis }}</h2>
+        </div>
+        <div class="col-md-4 text-right">
+            <a href="{% url 'pridat_zakaznika' %}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Nový zákazník
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtry -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row">
+                <div class="col-md-3 mb-2">
+                    <input type="text" name="jmeno" class="form-control" placeholder="Jméno" value="{{ request.GET.jmeno }}">
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" name="prijmeni" class="form-control" placeholder="Příjmení" value="{{ request.GET.prijmeni }}">
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" name="email" class="form-control" placeholder="Email" value="{{ request.GET.email }}">
+                </div>
+                <div class="col-md-3 mb-2">
+                    <button type="submit" class="btn btn-secondary btn-block">Filtrovat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Seznam zákazníků -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Jméno</th>
+                            <th>Příjmení</th>
+                            <th>Datum narození</th>
+                            <th>Email</th>
+                            <th>Telefon</th>
+                            <th>Počet půjček</th>
+                            <th>Akce</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for zakaznik in zakaznici %}
+                        <tr>
+                            <td>{{ zakaznik.jmeno }}</td>
+                            <td>{{ zakaznik.prijmeni }}</td>
+                            <td>{{ zakaznik.datum_narozeni }}</td>
+                            <td>{{ zakaznik.email }}</td>
+                            <td>{{ zakaznik.telefon }}</td>
+                            <td>{{ zakaznik.pujcka_set.count }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'detail_zakaznika' zakaznik.pk %}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#smazatZakaznika{{ zakaznik.pk }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Modal pro smazání -->
+                                <div class="modal fade" id="smazatZakaznika{{ zakaznik.pk }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Smazat zákazníka</h5>
+                                                <button type="button" class="close" data-dismiss="modal">
+                                                    <span>&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Opravdu chcete smazat tohoto zákazníka?</p>
+                                                <p><strong>Jméno:</strong> {{ zakaznik.jmeno }} {{ zakaznik.prijmeni }}</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form action="{% url 'smazat_zakaznika' zakaznik.pk %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušit</button>
+                                                    <button type="submit" class="btn btn-danger">Smazat</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">Žádní zákazníci nebyli nalezeni</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Seznam aut | Autopůjčovna{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>{{ nadpis }}</h2>
+        </div>
+        <div class="col-md-4 text-right">
+            <a href="{% url 'pridat_auto' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Přidat nové auto
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtry -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row">
+                <div class="col-md-3 mb-2">
+                    <input type="text" name="znacka" class="form-control" placeholder="Značka" value="{{ request.GET.znacka }}">
+                </div>
+                <div class="col-md-3 mb-2">
+                    <input type="text" name="model" class="form-control" placeholder="Model" value="{{ request.GET.model }}">
+                </div>
+                <div class="col-md-3 mb-2">
+                    <select name="dostupnost" class="form-control">
+                        <option value="">Všechna auta</option>
+                        <option value="1" {% if request.GET.dostupnost == '1' %}selected{% endif %}>Dostupná</option>
+                        <option value="0" {% if request.GET.dostupnost == '0' %}selected{% endif %}>Nedostupná</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <button type="submit" class="btn btn-secondary btn-block">Filtrovat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Seznam aut -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Značka</th>
+                            <th>Model</th>
+                            <th>Rok výroby</th>
+                            <th>Dostupnost</th>
+                            <th>Cena za den</th>
+                            <th>Akce</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for auto in auta %}
+                        <tr>
+                            <td>{{ auto.znacka }}</td>
+                            <td>{{ auto.model }}</td>
+                            <td>{{ auto.rok_vyroby }}</td>
+                            <td>
+                                {% if auto.dostupnost %}
+                                <span class="badge badge-success">Dostupné</span>
+                                {% else %}
+                                <span class="badge badge-danger">Nedostupné</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ auto.cena_za_den }} Kč</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'detail_auta' auto.pk %}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#smazatAuto{{ auto.pk }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Modal pro smazání -->
+                                <div class="modal fade" id="smazatAuto{{ auto.pk }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Smazat auto</h5>
+                                                <button type="button" class="close" data-dismiss="modal">
+                                                    <span>&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Opravdu chcete smazat toto auto?</p>
+                                                <p><strong>Auto:</strong> {{ auto.znacka }} {{ auto.model }}</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form action="{% url 'smazat_auto' auto.pk %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušit</button>
+                                                    <button type="submit" class="btn btn-danger">Smazat</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">Žádná auta nebyla nalezena</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

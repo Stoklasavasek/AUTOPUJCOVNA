@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Detail auta | Autopůjčovna{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>{{ auto.znacka }} {{ auto.model }}</h1>
+                <div>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#smazatAuto">
+                        <i class="fas fa-trash"></i> Smazat
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Základní informace -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Informace o vozidle</h5>
+                            <dl class="row">
+                                <dt class="col-sm-4">Značka:</dt>
+                                <dd class="col-sm-8">{{ auto.znacka }}</dd>
+
+                                <dt class="col-sm-4">Model:</dt>
+                                <dd class="col-sm-8">{{ auto.model }}</dd>
+
+                                <dt class="col-sm-4">Rok výroby:</dt>
+                                <dd class="col-sm-8">{{ auto.rok_vyroby }}</dd>
+
+                                <dt class="col-sm-4">Cena za den:</dt>
+                                <dd class="col-sm-8">{{ auto.cena_za_den }} Kč</dd>
+
+                                <dt class="col-sm-4">Stav:</dt>
+                                <dd class="col-sm-8">
+                                    {% if auto.dostupnost %}
+                                    <span class="badge badge-success">Dostupné</span>
+                                    {% else %}
+                                    <span class="badge badge-danger">Nedostupné</span>
+                                    {% endif %}
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistiky -->
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Statistiky</h5>
+                            <dl class="row">
+                                <dt class="col-sm-8">Počet půjček celkem:</dt>
+                                <dd class="col-sm-4">{{ auto.pujcka_set.count }}</dd>
+
+                                <dt class="col-sm-8">Počet servisů:</dt>
+                                <dd class="col-sm-4">{{ auto.servis_set.count }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seznam půjček -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Historie půjček</h5>
+                    <a href="{% url 'pridat_pujcku' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Nová půjčka
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Zákazník</th>
+                                    <th>Datum půjčení</th>
+                                    <th>Datum vrácení</th>
+                                    <th>Stav</th>
+                                    <th>Akce</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pujcka in auto.pujcka_set.all %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'detail_zakaznika' pujcka.zakaznik.pk %}">
+                                            {{ pujcka.zakaznik.jmeno }} {{ pujcka.zakaznik.prijmeni }}
+                                        </a>
+                                    </td>
+                                    <td>{{ pujcka.datum_pujceni }}</td>
+                                    <td>{{ pujcka.datum_vraceni|default:"Probíhá" }}</td>
+                                    <td>
+                                        {% if not pujcka.datum_vraceni %}
+                                        <span class="badge badge-success">Aktivní</span>
+                                        {% else %}
+                                        <span class="badge badge-secondary">Ukončeno</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'detail_pujcky' pujcka.pk %}" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#smazatPujcku{{ pujcka.pk }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">Žádné půjčky</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seznam servisů -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Historie servisů</h5>
+                    <a href="{% url 'pridat_servis' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Nový servis
+                    </a>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Cena</th>
+                                <th>Popis servisu</th>
+                                <th>Stav</th>
+                                <th>Akce</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for servis in auto.servis_set.all %}
+                            <tr>
+                                <td>{{ servis.datum }}</td>
+                                <td>{{ servis.cena }} Kč</td>
+                                <td>{{ servis.popis_servisu }}</td>
+                                <td>
+                                    {% if servis.stav == 'probiha' %}
+                                        <span class="badge badge-warning">Probíhá</span>
+                                    {% else %}
+                                        <span class="badge badge-success">Opraveno</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{% url 'detail_servisu' servis.pk %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#smazatServis{{ servis.pk }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">Žádné servisní záznamy</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pro smazání -->
+<div class="modal fade" id="smazatAuto" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Smazat auto</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Opravdu chcete smazat toto auto?</p>
+                <p><strong>Auto:</strong> {{ auto.znacka }} {{ auto.model }}</p>
+                <p><strong>Rok výroby:</strong> {{ auto.rok_vyroby }}</p>
+            </div>
+            <div class="modal-footer">
+                <form action="{% url 'smazat_auto' auto.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušit</button>
+                    <button type="submit" class="btn btn-danger">Smazat</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modaly pro smazání půjček -->
+{% for pujcka in auto.pujcka_set.all %}
+<div class="modal fade" id="smazatPujcku{{ pujcka.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Smazat půjčku</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Opravdu chcete smazat tuto půjčku?</p>
+                <p><strong>Zákazník:</strong> {{ pujcka.zakaznik.jmeno }} {{ pujcka.zakaznik.prijmeni }}</p>
+                <p><strong>Datum půjčení:</strong> {{ pujcka.datum_pujceni }}</p>
+            </div>
+            <div class="modal-footer">
+                <form action="{% url 'smazat_pujcku' pujcka.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušit</button>
+                    <button type="submit" class="btn btn-danger">Smazat</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Modaly pro smazání servisů -->
+{% for servis in auto.servis_set.all %}
+<div class="modal fade" id="smazatServis{{ servis.pk }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Smazat servis</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Opravdu chcete smazat tento servisní záznam?</p>
+                <p><strong>Datum:</strong> {{ servis.datum }}</p>
+                <p><strong>Cena:</strong> {{ servis.cena }} Kč</p>
+            </div>
+            <div class="modal-footer">
+                <form action="{% url 'smazat_servis' servis.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušit</button>
+                    <button type="submit" class="btn btn-danger">Smazat</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %} 
