@@ -1,0 +1,1 @@
+views uzpravy navic poznamky
