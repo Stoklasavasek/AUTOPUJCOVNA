@@ -72,18 +72,6 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="{{ form.stav.id_for_label }}">Stav opravy</label>
-                            {{ form.stav }}
-                            {% if form.stav.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.stav.errors %}
-                                {{ error }}
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="form-group">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Uložit
                             </button>
@@ -102,14 +90,12 @@
 {% block extra_js %}
 <script>
     $(document).ready(function() {
-        // Inicializace Select2 pro výběr auta
         $('#{{ form.auto.id_for_label }}').select2({
             theme: 'bootstrap4',
             placeholder: 'Vyberte auto',
             allowClear: true
         });
 
-        // Inicializace datepickeru
         $('#{{ form.datum.id_for_label }}').datepicker({
             format: 'dd.mm.yyyy',
             autoclose: true,

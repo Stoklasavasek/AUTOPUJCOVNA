@@ -6,7 +6,7 @@
 <div class="container">
     <h1 class="mb-4">{{ nadpis }}</h1>
 
-    <!-- Statistiky -->
+    
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="card text-white bg-primary">
@@ -37,40 +37,44 @@
         </div>
     </div>
 
-    <!-- Rychlé akce -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Rychlé akce</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <a href="{% url 'pridat_auto' %}" class="btn btn-primary btn-block mb-2">
-                                <i class="fas fa-plus-circle"></i> Přidat auto
+                    <div class="row justify-content-center mb-3">
+                        <div class="col-md-4">
+                            <a href="{% url 'pridat_auto' %}" class="btn btn-primary btn-lg w-100 mb-3 py-3">
+                                <i class="fas fa-car fa-2x mb-2"></i>
+                                <br>Přidat auto
                             </a>
                         </div>
-                        <div class="col-md-3">
-                            <a href="{% url 'pridat_zakaznika' %}" class="btn btn-success btn-block mb-2">
-                                <i class="fas fa-user-plus"></i> Nový zákazník
+                        <div class="col-md-4">
+                            <a href="{% url 'pridat_zakaznika' %}" class="btn btn-success btn-lg w-100 mb-3 py-3">
+                                <i class="fas fa-user-plus fa-2x mb-2"></i>
+                                <br>Nový zákazník
                             </a>
                         </div>
-                        <div class="col-md-3">
-                            <a href="{% url 'pridat_pujcku' %}" class="btn btn-info btn-block mb-2">
-                                <i class="fas fa-key"></i> Nová půjčka
-                            </a>
-                        </div>
-                        <div class="col-md-3">
-                            <a href="{% url 'pridat_platbu' %}" class="btn btn-warning btn-block mb-2">
-                                <i class="fas fa-money-bill-wave"></i> Nová platba
+                        <div class="col-md-4">
+                            <a href="{% url 'pridat_pujcku' %}" class="btn btn-info btn-lg w-100 mb-3 py-3">
+                                <i class="fas fa-key fa-2x mb-2"></i>
+                                <br>Nová půjčka
                             </a>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <a href="{% url 'pridat_servis' %}" class="btn btn-secondary btn-block mb-2">
-                                <i class="fas fa-tools"></i> Nový servis
+                    <div class="row justify-content-center">
+                        <div class="col-md-4">
+                            <a href="{% url 'pridat_platbu' %}" class="btn btn-warning btn-lg w-100 mb-3 py-3">
+                                <i class="fas fa-money-bill-wave fa-2x mb-2"></i>
+                                <br>Nová platba
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{% url 'pridat_servis' %}" class="btn btn-secondary btn-lg w-100 mb-3 py-3">
+                                <i class="fas fa-tools fa-2x mb-2"></i>
+                                <br>Nový servis
                             </a>
                         </div>
                     </div>
@@ -79,7 +83,6 @@
         </div>
     </div>
 
-    <!-- Aktivní půjčky -->
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -122,8 +125,8 @@
                                         {% endif %}
                                     </td>
                                     <td>
-                                        <a href="{% url 'upravit_pujcku' pujcka.pk %}" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-edit"></i>
+                                        <a href="{% url 'detail_pujcky' pujcka.pk %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
                                         </a>
                                     </td>
                                 </tr>

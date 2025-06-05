@@ -1,89 +1,144 @@
-{% extends "base.html" %}
+{% extends 'page/base.html' %}
 
-{% block title %}Upravit auto {{ auto.znacka }} {{ auto.model }} | Autopůjčovna{% endblock %}
+{% block title %}Upravit auto - Autopůjčovna{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h2>Upravit auto: {{ auto.znacka }} {{ auto.model }}</h2>
-        </div>
-        <div class="col-md-4 text-right">
-            <a href="{% url 'auto:detail_auta' auto.pk %}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Zpět na detail
-            </a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Upravit auto</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Základní informace</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.spz.id_for_label }}" class="form-label">SPZ</label>
+                            {{ form.spz }}
+                            {% if form.spz.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.spz.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.znacka.id_for_label }}" class="form-label">Značka</label>
+                            {{ form.znacka }}
+                            {% if form.znacka.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.znacka.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.model.id_for_label }}" class="form-label">Model</label>
+                            {{ form.model }}
+                            {% if form.model.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.model.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.rok_vyroby.id_for_label }}" class="form-label">Rok výroby</label>
+                            {{ form.rok_vyroby }}
+                            {% if form.rok_vyroby.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.rok_vyroby.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.najeto_km.id_for_label }}" class="form-label">Najeto km</label>
+                            {{ form.najeto_km }}
+                            {% if form.najeto_km.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.najeto_km.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.cena_den.id_for_label }}" class="form-label">Cena za den</label>
+                            {{ form.cena_den }}
+                            {% if form.cena_den.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.cena_den.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                {{ form.je_dostupne }}
+                                <label class="form-check-label" for="{{ form.je_dostupne.id_for_label }}">
+                                    Je dostupné
+                                </label>
+                            </div>
+                            {% if form.je_dostupne.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.je_dostupne.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label for="{{ form.fotografie.id_for_label }}" class="form-label">Fotografie</label>
+                            {{ form.fotografie }}
+                            {% if form.fotografie.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.fotografie.errors }}
+                                </div>
+                            {% endif %}
+                            {% if auto.fotografie %}
+                                <div class="mt-2">
+                                    <img src="{{ auto.fotografie.url }}" alt="{{ auto }}" class="img-thumbnail" style="max-width: 200px;">
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Uložit změny</button>
+                            <a href="{% url 'auto:detail_auta' auto.id %}" class="btn btn-secondary">Zrušit</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        {% for field in form %}
-                        <div class="form-group">
-                            {{ field.label_tag }}
-                            {{ field }}
-                            {% if field.help_text %}
-                            <small class="form-text text-muted">{{ field.help_text }}</small>
-                            {% endif %}
-                            {% if field.errors %}
-                            <div class="alert alert-danger">
-                                {{ field.errors }}
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Uložit změny
-                            </button>
-                            <a href="{% url 'auto:detail_auta' auto.pk %}" class="btn btn-secondary">Zrušit</a>
-                        </div>
-                    </form>
-                </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Nebezpečná zóna</h5>
+            </div>
+            <div class="card-body">
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#smazatAuto">
+                    <i class="fas fa-trash"></i> Smazat auto
+                </button>
             </div>
         </div>
-        <div class="col-md-4">
-            <!-- Aktuální stav -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Aktuální stav</h5>
-                </div>
-                <div class="card-body">
-                    <dl>
-                        <dt>Počet aktivních půjček:</dt>
-                        <dd>{{ auto.pujcka_set.count }}</dd>
-                        
-                        <dt>Poslední servis:</dt>
-                        <dd>
-                            {% with posledni_servis=auto.servis_set.last %}
-                            {% if posledni_servis %}
-                                {{ posledni_servis.datum }}
-                            {% else %}
-                                Žádný servis
-                            {% endif %}
-                            {% endwith %}
-                        </dd>
-                    </dl>
-                </div>
-            </div>
+    </div>
+</div>
 
-            <!-- Nebezpečná zóna -->
-            <div class="card border-danger">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">Nebezpečná zóna</h5>
-                </div>
-                <div class="card-body">
-                    <p>Smazání auta je nevratná operace. Auto lze smazat pouze pokud nemá žádné aktivní půjčky.</p>
-                    <form method="post" action="{% url 'auto:smazat_auto' auto.pk %}" onsubmit="return confirm('Opravdu chcete smazat toto auto?');">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-block" {% if auto.pujcka_set.exists %}disabled{% endif %}>
-                            <i class="fas fa-trash"></i> Smazat auto
-                        </button>
-                    </form>
-                </div>
+<div class="modal fade" id="smazatAuto" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Smazat auto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Opravdu chcete smazat toto auto?</p>
+                <p><strong>Auto:</strong> {{ auto.znacka }} {{ auto.model }}</p>
+                <p><strong>SPZ:</strong> {{ auto.spz }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
+                <form action="{% url 'auto:smazat_auto' auto.id %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Smazat</button>
+                </form>
             </div>
         </div>
     </div>

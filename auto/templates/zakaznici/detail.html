@@ -16,7 +16,7 @@
             </div>
 
             <div class="row">
-                <!-- Základní informace -->
+              
                 <div class="col-md-6 mb-4">
                     <div class="card">
                         <div class="card-body">
@@ -45,7 +45,6 @@
                     </div>
                 </div>
 
-                <!-- Statistiky -->
                 <div class="col-md-6 mb-4">
                     <div class="card">
                         <div class="card-body">
@@ -56,7 +55,7 @@
 
                                 <dt class="col-sm-8">Aktivní půjčky:</dt>
                                 <dd class="col-sm-4">
-                                    {{ zakaznik.pujcka_set.filter.datum_vraceni__isnull=True.count }}
+                                    {{ pocet_aktivnich_pujcek }}
                                 </dd>
                             </dl>
                         </div>
@@ -64,7 +63,7 @@
                 </div>
             </div>
 
-            <!-- Seznam půjček -->
+ 
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Historie půjček</h5>
@@ -126,7 +125,7 @@
     </div>
 </div>
 
-<!-- Modal pro smazání -->
+
 <div class="modal fade" id="smazatZakaznika" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -152,7 +151,7 @@
     </div>
 </div>
 
-<!-- Modaly pro smazání půjček -->
+
 {% for pujcka in pujcky %}
 <div class="modal fade" id="smazatPujcku{{ pujcka.pk }}" tabindex="-1">
     <div class="modal-dialog">

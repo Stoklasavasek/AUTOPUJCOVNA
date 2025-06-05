@@ -8,14 +8,13 @@
         <div class="col-md-8">
             <h2>{{ nadpis }}</h2>
         </div>
-        <div class="col-md-4 text-right">
+        <div class="col-md-4 text-end">
             <a href="{% url 'pridat_zakaznika' %}" class="btn btn-primary">
                 <i class="fas fa-user-plus"></i> Nový zákazník
             </a>
         </div>
     </div>
 
-    <!-- Filtry -->
     <div class="card mb-4">
         <div class="card-body">
             <form method="get" class="row">
@@ -29,13 +28,12 @@
                     <input type="text" name="email" class="form-control" placeholder="Email" value="{{ request.GET.email }}">
                 </div>
                 <div class="col-md-3 mb-2">
-                    <button type="submit" class="btn btn-secondary btn-block">Filtrovat</button>
+                    <button type="submit" class="btn btn-secondary w-100">Filtrovat</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Seznam zákazníků -->
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -65,20 +63,17 @@
                                     <a href="{% url 'detail_zakaznika' zakaznik.pk %}" class="btn btn-sm btn-info">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#smazatZakaznika{{ zakaznik.pk }}">
+                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#smazatZakaznika{{ zakaznik.pk }}">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
 
-                                <!-- Modal pro smazání -->
-                                <div class="modal fade" id="smazatZakaznika{{ zakaznik.pk }}" tabindex="-1">
+                                <div class="modal fade" id="smazatZakaznika{{ zakaznik.pk }}" tabindex="-1" aria-labelledby="smazatZakaznikaLabel{{ zakaznik.pk }}" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title">Smazat zákazníka</h5>
-                                                <button type="button" class="close" data-dismiss="modal">
-                                                    <span>&times;</span>
-                                                </button>
+                                                <h5 class="modal-title" id="smazatZakaznikaLabel{{ zakaznik.pk }}">Smazat zákazníka</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 <p>Opravdu chcete smazat tohoto zákazníka?</p>
@@ -87,7 +82,7 @@
                                             <div class="modal-footer">
                                                 <form action="{% url 'smazat_zakaznika' zakaznik.pk %}" method="post">
                                                     {% csrf_token %}
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušit</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
                                                     <button type="submit" class="btn btn-danger">Smazat</button>
                                                 </form>
                                             </div>

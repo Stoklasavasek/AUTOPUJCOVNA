@@ -58,16 +58,10 @@ class Platba(models.Model):
         return f"Platba #{self.id} - {self.castka} Kč"
 
 class Servis(models.Model):
-    STAV_CHOICES = [
-        ('opraveno', 'Opraveno'),
-        ('probiha', 'Probíhá'),
-    ]
-    
     datum = models.DateField()
     cena = models.DecimalField(max_digits=12, decimal_places=2)
     popis_servisu = models.TextField(verbose_name="Popis servisu")
     auto = models.ForeignKey(Auto, on_delete=models.CASCADE)
-    stav = models.CharField(max_length=20, choices=STAV_CHOICES, default='probiha', verbose_name="Stav opravy")
 
     class Meta:
         verbose_name = "Servis      "
