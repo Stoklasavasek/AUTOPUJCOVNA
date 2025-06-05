@@ -33,5 +33,4 @@ urlpatterns = [
     path('servisy/<int:pk>/', views.detail_servisu, name='detail_servisu'),
     path('servisy/pridat/', views.pridat_servis, name='pridat_servis'),
     path('servisy/<int:pk>/smazat/', views.smazat_servis, name='smazat_servis'),
-    path('servisy/<int:pk>/opraveno/', views.oznacit_servis_jako_opraveny, name='oznacit_servis_jako_opraveny'),
 ]

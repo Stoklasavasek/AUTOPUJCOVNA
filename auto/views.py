@@ -284,11 +284,3 @@ def smazat_servis(request, pk):
         messages.success(request, 'Servis byl úspěšně smazán.')
         return redirect('seznam_servisu')
     return redirect('detail_servisu', pk=pk)
-
-
-def oznacit_servis_jako_opraveny(request, pk):
-    servis = get_object_or_404(Servis, pk=pk)
-    servis.stav = 'opraveno'
-    servis.save()
-    messages.success(request, 'Servis byl označen jako opravený.')
-    return redirect('seznam_servisu')
